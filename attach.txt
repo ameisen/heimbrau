@@ -1,0 +1,2 @@
+select vdisk file="C:\Development\kernel.vhd" 
+attach vdisk noerr

@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6EF0150D-44A9-44D8-9DE7-16D31946CD89}</ProjectGuid>
+    <RootNamespace>heimbrau_loader</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.hbb</TargetExt>
+    <GenerateManifest>false</GenerateManifest>
+    <OutDir>$(SolutionDir)bin64\</OutDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>PostBuildEvent</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>false</ExceptionHandling>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>false</OpenMPSupport>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ForcedIncludeFiles>../../common.hpp;../../heimbrau_asm/hb_asm.hpp</ForcedIncludeFiles>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <WinRTNoStdLib>true</WinRTNoStdLib>
+      <CompileAsManaged>false</CompileAsManaged>
+      <DisableSpecificWarnings>4201;4510;4512;4610</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LOADER</PreprocessorDefinitions>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
+      <AdditionalOptions> /Qvec-report:2</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Multiboot2\*.obj;$(OutDir)\libs\heimbrau_asm.lib</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <NoEntryPoint>false</NoEntryPoint>
+      <BaseAddress>0x100000</BaseAddress>
+      <FixedBaseAddress>true</FixedBaseAddress>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
+      <SectionAlignment>4096</SectionAlignment>
+      <AllowIsolation>false</AllowIsolation>
+      <EnableUAC>false</EnableUAC>
+      <EntryPointSymbol>mb2_entry</EntryPointSymbol>
+      <SubSystem>Native</SubSystem>
+      <Driver>NotSet</Driver>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>false</DataExecutionPrevention>
+      <LargeAddressAware>true</LargeAddressAware>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <CLRUnmanagedCodeCheck>false</CLRUnmanagedCodeCheck>
+      <CLRSupportLastError>Disabled</CLRSupportLastError>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <AdditionalOptions>/EHsc %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <PreBuildEvent>
+      <Command>nasm -f win64 Multiboot2\*.asm</Command>
+      <Message>Assembling Loader ASM files</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)bin64\kernel.flat L:\System\kernel.flat</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>$(SolutionDir)bin64\heimbrau_rebase.exe $(SolutionDir)bin64\heimbrau_loader.hbb $(SolutionDir)bin64\kernel.flat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>Rebasing Binary</Message>
+      <Outputs>a</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\heimbrau_kernel\Paging\Paging.cpp" />
+    <ClCompile Include="LoaderIO\kprintf.cpp" />
+    <ClCompile Include="LoaderIO\lio.cpp" />
+    <ClCompile Include="Loader\Loader.cpp" />
+    <ClCompile Include="Loader\MemoryMap.cpp" />
+    <ClCompile Include="Multiboot2\Multiboot2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\hash.hpp" />
+    <ClInclude Include="LoaderIO\lio.hpp" />
+    <ClInclude Include="Loader\Loader.hpp" />
+    <ClInclude Include="Loader\MemoryMap.hpp" />
+    <ClInclude Include="Multiboot2\Multiboot2.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Multiboot2\mb2_entry.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
